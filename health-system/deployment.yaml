@@ -15,7 +15,7 @@ spec:
     spec:
       containers:         
         - name: healthsystem
-          image: 'neethirocks/healthsystem:1.0'          
+          image: 'neethirocks/health-system:1.0'          
           ports:
             - containerPort: 8080
           env:
