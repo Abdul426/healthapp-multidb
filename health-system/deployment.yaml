@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: healthsystem
+  namespace: healthapp
+spec:
+  selector:
+      matchLabels:
+        app: healthsystem
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: healthsystem
+    spec:
+      containers:         
+        - name: healthsystem
+          image: 'neethirocks/healthsystem:1.0'          
+          ports:
+            - containerPort: 8080
+          env:
+          - name: spring_datasource_patient_database
+            value: patientDB
+          - name: spring_datasource_patient_url
+            value: jdbc:mysql://patientdb:3306/patientDB?createDatabaseIfNotExist=true&useSSL=false
+          - name: spring_datasource_patient_username
+            valueFrom:
+              secretKeyRef:
+                name: mysql-secret
+                key: MYSQL_USER
+          - name: spring_datasource_patient_password
+            valueFrom:
+              secretKeyRef:
+                name: mysql-secret
+                key: MYSQL_PASSWORD
+          - name: spring_datasource_appointment_database
+            value: appointmentDB
+          - name: spring_datasource_appointment_url
+            value: jdbc:mysql://appointmentdb:3306/appointmentDB?createDatabaseIfNotExist=true&useSSL=false
+          - name: spring_datasource_appointment_username
+            valueFrom:
+              secretKeyRef:
+                name: mysql-secret
+                key: MYSQL_USER
+          - name: spring_datasource_appointment_password
+            valueFrom:
+              secretKeyRef:
+                name: mysql-secret
+                key: MYSQL_PASSWORD
+          - name: spring_datasource_doctor_database
+            value: patientDB
+          - name: spring_datasource_doctor_url
+            value: jdbc:mysql://doctordb:3306/doctorDB?createDatabaseIfNotExist=true&useSSL=false
+          - name: spring_datasource_doctor_username
+            valueFrom:
+              secretKeyRef:
+                name: mysql-secret
+                key: MYSQL_USER
+          - name: spring_datasource_doctor_password
+            valueFrom:
+              secretKeyRef:
+                name: mysql-secret
+                key: MYSQL_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: healthsystem-service
+  labels:
+    name: healthsystem-service
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: '8080'
+      nodePort: 32999
+  selector:
+    app: healthsystem
+  type: NodePort

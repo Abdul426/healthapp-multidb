@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: patientdb-secret
+  namespace: healthapp
+type: Opaque
+data:
+  MYSQL_ROOT_PASSWORD: cGFzc3dvcmQ= #password
+  MYSQL_DATABASE: dGVzdA== #test
+  MYSQL_USER: dGVzdHVzZXI= #patientuser
+  MYSQL_PASSWORD: dGVzdDEyMw== #patient123
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: patientdb
+  namespace: healthapp
+spec:
+  selector:
+    matchLabels:
+      app: patientdb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: patientdb
+    spec:
+      kubernetes.io/hostname: control-plane-1.openshift.sanovi.com
+      volumes:
+        - name: ro-slave-patient-nfs-pv-datadir-vol
+          persistentVolumeClaim:
+            claimName: ro-slave-patient-nfs-pvc-datadir-claim
+      containers:
+      - image: mysql:5.7
+        name: patientdb
+        env:
+        - name: MYSQL_SERVER_CONTAINER
+          value: patientdb
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+              secretKeyRef:
+                name: patientdb-secret
+                key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom:
+              secretKeyRef:
+                name: patientdb-secret
+                key: MYSQL_DATABASE
+        - name: MYSQL_USER
+          valueFrom:
+              secretKeyRef:
+                name: patientdb-secret
+                key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+              secretKeyRef:
+                name: patientdb-secret
+                key: MYSQL_PASSWORD
+        ports:
+        - containerPort: 3306
+          name: patientdb
+        volumeMounts:
+        - name: ro-slave-patient-nfs-pv-datadir-vol
+          mountPath: /var/lib/mysql
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: patientdb
+  namespace: healthapp
+spec:
+  type: NodePort
+  ports:
+  - name: patientdb
+    port: 3306
+    targetPort: 3306
+    protocol: TCP
+    nodePort: 32003
+  selector:
+    app: patientdb

@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ro-master-appointment-nfs-pv-datadir
+  namespace: healthapp
+spec:
+  capacity:
+    storage: 50Gi
+  storageClassName: standard
+  accessModes:
+  - ReadWriteOnce
+  nfs:
+    path: /opt/appointmentdb/os-mm/var/lib/mysql
+    server: 192.168.8.61
+  persistentVolumeReclaimPolicy: Recycle
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ro-master-appointment-nfs-pvc-datadir-claim
+  namespace: healthapp
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 10Gi
+  volumeName: ro-master-appointment-nfs-pv-datadir
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ro-master-doctor-nfs-pv-datadir
+  namespace: healthapp
+spec:
+  capacity:
+    storage: 50Gi
+  storageClassName: standard
+  accessModes:
+  - ReadWriteOnce
+  nfs:
+    path: /opt/doctordb/os-mm/var/lib/mysql
+    server: 192.168.8.61
+  persistentVolumeReclaimPolicy: Recycle
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ro-master-doctor-nfs-pvc-datadir-claim
+  namespace: healthapp
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 10Gi
+  volumeName: ro-master-doctor-nfs-pv-datadir
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ro-master-patient-nfs-pv-datadir
+  namespace: healthapp
+spec:
+  capacity:
+    storage: 50Gi
+  storageClassName: standard
+  accessModes:
+  - ReadWriteOnce
+  nfs:
+    path: /opt/patientdb/os-mm/var/lib/mysql
+    server: 192.168.8.61
+  persistentVolumeReclaimPolicy: Recycle
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ro-master-patient-nfs-pvc-datadir-claim
+  namespace: healthapp
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 10Gi
+  volumeName: ro-master-patient-nfs-pv-datadir
+
