@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.ibm.ro.openshift.healthsystem.model.doctor.Doctor;
 
-//@Repository
+@Repository
 public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
 }

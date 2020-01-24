@@ -20,8 +20,7 @@ public class PatientController {
 
 	@GetMapping(value = "/{pId}")
 	public Patient getPatient(@PathVariable("pId") Long pId) {
-		return new Patient();
-		//return patientService.getPatient(pId);
+		return patientService.getPatient(pId);
 	}
 
 	@PostMapping

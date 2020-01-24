@@ -11,7 +11,7 @@ import com.ibm.ro.openshift.healthsystem.repository.doctor.DoctorRepository;
 @Service
 public class DoctorServiceImpl implements DoctorService {
 
-	//@Autowired
+	@Autowired
 	DoctorRepository doctorRepository;
 
 	@Override
